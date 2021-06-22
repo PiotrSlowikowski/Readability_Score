@@ -1,5 +1,8 @@
 package readability;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -7,35 +10,61 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.appInit();
+        String pathToFile = "C:\\Users\\Piotrek\\Desktop\\Nowy folder\\Java1modul\\Readability Score\\Readability Score\\task\\src\\readability\\" + args[0];
+        main.appInit(pathToFile);
 
-//        System.out.println("The score is: " + main.calculateScore(580,108,6));
+
     }
 
-    private void appInit() {
+    private void appInit(String pathToFile) {
         Main main = new Main();
-        Scanner scanner = new Scanner(System.in);
-        String text = "Readability is the ease with which a reader can understand a written text. In natural language, the readability of text depends on its content and its presentation. Researchers have used various factors to measure readability. Readability is more than simply legibility, which is a measure of how easily a reader can distinguish individual letters or characters from each other. Higher readability eases reading effort and speed for any reader, but it is especially important for those who do not have high reading comprehension. In readers with poor reading comprehension, raising the readability level of a text from mediocre to good can make the difference between success and failure";
-        main.printStatistics(text);
+        String fileContent = main.getText(pathToFile);
+        printStatistics(fileContent);
 
+    }
 
+    private String getText(String pathToFile) {
+        File file = new File(pathToFile);
+        String text = "";
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNext()) {
+                text = scanner.nextLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + pathToFile);
+        }
+        return text;
     }
 
     private void printStatistics(String text) {
         Main main = new Main();
+        System.out.println("The text is:\n" + text);
         double charactersQuantity = main.countCharacters(text);
         double wordsQuantity = main.countWords(text);
         double sentencesQuantity = main.countSentences(text);
         double score = main.calculateScore(charactersQuantity, wordsQuantity, sentencesQuantity);
-        System.out.println("Sentences: " + wordsQuantity);
-        System.out.println("Characters: " + sentencesQuantity);
-        System.out.println("Words: " + charactersQuantity);
-        System.out.format("The score is: %.2f",score);
+        System.out.println();
+        System.out.println("Words: " + (int) wordsQuantity);
+        System.out.println("Sentences: " + (int) sentencesQuantity);
+        System.out.println("Characters: " + (int) charactersQuantity);
+        System.out.format("The score is: %.2f", score);
+        System.out.println();
+        printGradeLevel(score);
+
+    }
+
+    private void printGradeLevel(double score) {
+
+        int value = (int) Math.ceil(score);
+
+        List<String> list = List.of("5-6", "6-7", "7-9", "9-10", "10-11", "11-12",
+                "12-13", "13-14", "14-15", "15-16", "16-17", "17-18", "18-24", "24+");
+        System.out.println("This text should be understood by " + list.get(value - 1) + " years olds.");
     }
 
     private double calculateScore(double charactersQuantity, double wordsQuantity, double sentencesQuantity) {
-        double score = 4.71 * (charactersQuantity / wordsQuantity) + 0.5 * (wordsQuantity / sentencesQuantity) - 21.43;
-        return score;
+        return 4.71 * (charactersQuantity / wordsQuantity) + 0.5 * (wordsQuantity / sentencesQuantity) - 21.43;
     }
 
     private double countCharacters(String text) {
@@ -63,21 +92,6 @@ public class Main {
         } else {
             return "HARD";
         }
-    }
-
-    private int countWordsInSentenceAverage(String text) {
-        int average;
-        int wordsQuantity = 0;
-
-        String[] textSplitted = text.split("[!?.]");
-        int sentencesQuantity = textSplitted.length;
-
-        for (int i = 0; i < textSplitted.length; i++) {
-            wordsQuantity += textSplitted[i].split(" ").length;
-        }
-
-        average = wordsQuantity / sentencesQuantity;
-        return average;
     }
 
 
