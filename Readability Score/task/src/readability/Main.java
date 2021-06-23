@@ -10,21 +10,21 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-        String pathToFile = "C:\\Users\\Piotrek\\Desktop\\Nowy folder\\Java1modul\\Readability Score\\Readability Score\\task\\src\\readability\\" + args[0];
-        main.appInit(pathToFile);
+        String argument = args[0];
+        main.appInit(argument);
 
 
     }
 
-    private void appInit(String pathToFile) {
+    private void appInit(String argument) {
         Main main = new Main();
-        String fileContent = main.getText(pathToFile);
+        String fileContent = main.getText(argument);
         printStatistics(fileContent);
 
     }
 
-    private String getText(String pathToFile) {
-        File file = new File(pathToFile);
+    private String getText(String argument) {
+        File file = new File(argument);
         String text = "";
 
         try (Scanner scanner = new Scanner(file)) {
@@ -32,8 +32,9 @@ public class Main {
                 text = scanner.nextLine();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + pathToFile);
+            System.out.println("File not found: " + argument);
         }
+
         return text;
     }
 
@@ -51,7 +52,6 @@ public class Main {
         System.out.format("The score is: %.2f", score);
         System.out.println();
         printGradeLevel(score);
-
     }
 
     private void printGradeLevel(double score) {
@@ -82,17 +82,7 @@ public class Main {
     }
 
     private double countWords(String text) {
-        return text.split(" ").length;
+        return text.split("\\s+").length;
     }
-
-
-    private String estimateLevel(int averageWordsQuantity) {
-        if (averageWordsQuantity <= 10) {
-            return "EASY";
-        } else {
-            return "HARD";
-        }
-    }
-
 
 }
