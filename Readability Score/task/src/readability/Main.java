@@ -10,21 +10,20 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-        String argument = args[0];
-        main.appInit(argument);
+//        String argument = args[0];
 
-
+        main.appInit();
     }
 
-    private void appInit(String argument) {
+    private void appInit() {
         Main main = new Main();
-        String fileContent = main.getText(argument);
+        String fileContent = main.getText();
         printStatistics(fileContent);
-
     }
 
-    private String getText(String argument) {
-        File file = new File(argument);
+    private String getText() {
+        String pathToFile = "C:\\Users\\Piotrek\\Desktop\\Nowy folder\\Java1modul\\Readability Score\\Readability Score\\task\\src\\readability\\in.txt";
+        File file = new File(pathToFile);
         String text = "";
 
         try (Scanner scanner = new Scanner(file)) {
@@ -32,25 +31,21 @@ public class Main {
                 text = scanner.nextLine();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + argument);
+            System.out.println("File not found: " + pathToFile);
         }
-
         return text;
     }
 
     private void printStatistics(String text) {
         Main main = new Main();
         System.out.println("The text is:\n" + text);
-        double charactersQuantity = main.countCharacters(text);
-        double wordsQuantity = main.countWords(text);
-        double sentencesQuantity = main.countSentences(text);
+//        Quantities
+        double charactersQuantity = text.replaceAll("\\s", "").length();
+        double wordsQuantity = text.split("\\s+").length;
+        double sentencesQuantity = text.split("[!?.]").length;
         double score = main.calculateScore(charactersQuantity, wordsQuantity, sentencesQuantity);
-        System.out.println();
-        System.out.println("Words: " + (int) wordsQuantity);
-        System.out.println("Sentences: " + (int) sentencesQuantity);
-        System.out.println("Characters: " + (int) charactersQuantity);
-        System.out.format("The score is: %.2f", score);
-        System.out.println();
+        double syllablesQuantity = text.split("[aeiouyAEIOUY]+").length;
+        System.out.format("\nWords: %d%nSentences: %d%nCharacters: %d%nSyllables:%d%nThe score is: %.2f%n", (int) wordsQuantity, (int) sentencesQuantity, (int) charactersQuantity, (int) syllablesQuantity, score);
         printGradeLevel(score);
     }
 
@@ -65,24 +60,6 @@ public class Main {
 
     private double calculateScore(double charactersQuantity, double wordsQuantity, double sentencesQuantity) {
         return 4.71 * (charactersQuantity / wordsQuantity) + 0.5 * (wordsQuantity / sentencesQuantity) - 21.43;
-    }
-
-    private double countCharacters(String text) {
-        int charactersQuantity = 0;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) != ' ') {
-                charactersQuantity++;
-            }
-        }
-        return charactersQuantity;
-    }
-
-    private double countSentences(String text) {
-        return text.split("[!?.]").length;
-    }
-
-    private double countWords(String text) {
-        return text.split("\\s+").length;
     }
 
 }
